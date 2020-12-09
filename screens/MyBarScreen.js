@@ -1,22 +1,82 @@
-
-import {  Button} from 'react-native-elements';
 import React, { useState, useEffect } from 'react';
-import { Alert, StyleSheet, Text, View, TextInput, FlatList, Image, Linking} from 'react-native';
+import { Alert, StyleSheet, Text, View, FlatList, TouchableOpacity, Pressable, Image, SafeAreaView } from 'react-native';
+import {ListItem, Avatar} from 'react-native-elements';
+import MyCarousel from '../components/Carousel_ingredient'
+import { Button } from 'react-native-paper';
+import MySearchBar from '../components/SearchBar';
+import {firebaseConfig} from './keys.js';
+import * as firebase from 'firebase';
 import {keyapi} from './keys.js';
-import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 
+const config = firebaseConfig() ;
+  
+if (!firebase.apps.length) {
+    firebase.initializeApp(config);
+}
 
 export default function MyBarScreen({ navigation }) {
 
   const [allIngr, setAllIngr] = useState([]);
+  const [filteredIngr, setFilteredIngr] = useState([]);
+  const [searchText, setSearchText] = useState('');
+  const [myBar, setMyBar] = useState([]);
+  const [fullData, setFullData] = useState([]);
   const key = keyapi();
-  
+
+  // Load the full build.
+  const _ = require("lodash");
+
   useEffect(() => {
     getAllIngr();
-  }, []); 
+  }, []);
 
+  //Set up DB and get all items
+  useEffect(() => {
+    let mounted = true;
+    firebase
+      .database()
+      .ref("bar/")
+      .on("value", (snapshot) => {
+        if(mounted){
+          const data = snapshot.val();
+          if (data !== null) {
+            const keys = Object.keys(data);
+            const values = Object.values(data);
+            const result = {};
+            keys.forEach((key, i) => result[key] = values[i]);
+            setMyBar(values);
+            setFullData(result); 
+        }} else {
+          setMyBar([]);
+          setFullData([]);
+        }
+        return () => mounted = false;
+      });
+  }, []);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable onPress={() => navigation.navigate("Cocktailify", myBar)}>
+          <Image 
+            source={require('../components/cocktails.png')}
+            //<div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+            style={{ width: 40, height: 40, marginRight: 20 }}/>
+        </Pressable>
+      ),
+    });
+  }, [navigation]);
+
+
+  //Delete Item from My Bar
+  const deleteData = (item) => {
+    const key = _.findKey(fullData, item);
+    firebase.database().ref("bar/").child(key).remove();
+  };
+
+  //Get all possible ingredients
   const getAllIngr = () => {
-    const url = 'https://www.thecocktaildb.com/api/json/v2/9973533/list.php?i=list';
+    const url = 'https://www.thecocktaildb.com/api/json/'+ key + '/list.php?i=list';
     fetch(url)
     .then((response) => response.json())
     .then((jsondata) => { 
@@ -25,234 +85,82 @@ export default function MyBarScreen({ navigation }) {
     .catch((error) => { 
         Alert.alert('Error', error); 
     }); 
-  }
-
+  };
+  
+  //Render Items 
   const Item = ({ item }) => {
     const url = 'https://www.thecocktaildb.com/images/ingredients/' + item.strIngredient1 + '.png'
     return (
       <TouchableOpacity
-        style={styles.grid}
         onPress={() =>
-          props.navigation.navigate({
-            routeName: "...",
-            params: { ingredientName: item.strIngredient1 },
-          })
-        }
-      >
-      <View style={{ ...styles.container, ...{ backgroundColor: "white" } }}>
-        <Image source={{uri: url}}  style={{width:120, height:120, borderRadius:5}} />
-          <View style={{alignItems:"center", flex:1}}>
-              <Text style={{fontWeight:"bold"}}>{item.strIngredient1}</Text>
-          </View>
-        </View>
+          navigation.navigate("Ingredient Details", item.strIngredient1)
+      }>
+        <ListItem bottomDivider>
+          <Avatar source={{uri:url}} />
+          <ListItem.Content>
+            <ListItem.Title>{item.strIngredient1}</ListItem.Title>
+          </ListItem.Content>
+          <ListItem.Chevron />
+        </ListItem>
       </TouchableOpacity>
     );
   }
 
+  //search feature
+  const search = (searchText) => {
+    setSearchText(searchText);
+  
+    let filteredIngr = allIngr.filter(function (item) {
+      return item.strIngredient1.includes(searchText);
+    });
+  
+    setFilteredIngr(filteredIngr);
+  };
+
   return (
-    <ScrollView>
-      <View style={styles.screen} >
-        <FlatList 
-          style={styles.results}
-          data={allIngr} 
-          keyExtractor={item => item.id} 
-          renderItem={({item}) => <Item item = {item}/>}
-          numColumns={2} />  
+    <SafeAreaView style={styles.screen}>
+        <MySearchBar onChangeText={search} value={searchText} placeholder={'Search ingredients...'}/>
+        <Text style={styles.header}>My bar</Text>
+        {myBar.length === 0 &&
+          <Text style={styles.replacement}>You haven't added anything to your Bar yet </Text>
+        }
+        <View style={{ flex: 1, flexDirection:'row' }}>
+          <MyCarousel data = {myBar} navigation = {navigation} deleteData = {deleteData}/>
         </View>
-    </ScrollView> 
+        <Text style={styles.header}>Ingredients</Text>
+        <View style={{ flex: 2}}>
+          <FlatList 
+              data={filteredIngr && filteredIngr.length > 0 ? filteredIngr : allIngr}
+              keyExtractor={(item, index) => (item, index)} 
+              renderItem={({item}) => <Item item = {item}/>}
+              />  
+        </View>
+    </SafeAreaView> 
   );
 }
+
+
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     justifyContent: "center",
     alignContent: "center",
-    alignItems: "center",
+    backgroundColor:'white',
   },
-  grid: {
-    margin: 10,
-    height: 150,
-    width: 150,
-    shadowColor: "black",
-    shadowOpacity: 0.20,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 5,
-  },
-  container: {
-    flex: 1,
-    borderRadius: 10,
-    alignContent: "center",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: {
-    fontFamily: "roboto-bold",
-    fontSize: 18,
+  header: { 
+    color: "gray",
+    fontSize: 20,
+    fontWeight: "bold", 
+    textAlign: "left",
+    fontWeight: "bold",
     padding: 10,
-    margin: 5,
   },
-  text: { 
-    fontSize: 15, 
-    fontFamily: "roboto"
-  },
-  inputContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    alignContent: "space-around",
-    alignItems: "center",
-  },
-  input: {
-    height: 45,
-    borderColor: "grey",
-    borderWidth: 1,
-    width: 280,
-    margin: 10,
-    backgroundColor: "white",
-    borderRadius: 15,
-    fontSize: 12,
-  },
-  //container: {
-    //flex: 1,
-    //backgroundColor: '#F7F7F7',
-  //},
-  textInput: {
-    fontSize: 18,
-    width: 300,
-    margin: 10,
-    alignSelf: "center",
-    backgroundColor:"#FFEFD5",
-  },
-  bigBlue: {
-    marginTop: 20,
+  replacement: {
+    color: "lightgray",
     fontSize: 20,
-    marginLeft: 10,
-  },
-  listItem:{
-    margin:5,
-    padding:5,
-    backgroundColor:"#FFF",
-    width:"90%",
-    alignSelf:"center",
-    flexDirection:"row",
-    borderRadius:5
+    fontWeight: "bold", 
+    textAlign: "center",
+    fontWeight: "bold",
+    margin:5
   }
 });
-
-  
-
- /* 
-
-
-  //// search by ingredient + image 
-  const [search, setSearch] = useState('');
-  const [ingr, setIngr] = useState([]);
-  const [imageUrl, setImageUrl] = useState('');
-
-  const getIngr = () => {
-    const url = 'https://www.thecocktaildb.com/api/json/v2/9973533/search.php?i=' + search;
-    fetch(url)
-    .then((response) => response.json())
-    .then((jsondata) => { 
-        setIngr(jsondata.ingredients[0]);
-    })
-    .then(setImageUrl('https://www.thecocktaildb.com/images/ingredients/' + search + '.png'))
-    .catch((error) => { 
-        Alert.alert('Error', error); 
-    }); 
-  }
-
-  return (
-    <View >
-      <View>
-        <Text > Please insert ingredients: </Text>
-        <TextInput
-          style={styles.textInput}
-          value={search} 
-          placeholder="vodka, gin, etc"
-          onChangeText={(search) => setSearch(search)} />
-        <Button title="Find" onPress={getIngr} />
-        <View >
-        <Image source={{uri: imageUrl}}  style={{width:100, height:100, borderRadius:5}} />
-              <Text >{ingr.strIngredient}</Text>
-              <Text >{ingr.strDescription}</Text>
-        </View>
-    </View>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F7F7F7',
-  },
-  textInput: {
-    fontSize: 18,
-    width: 300,
-    margin: 10,
-    alignSelf: "center",
-    backgroundColor:"#FFEFD5",
-  },
-  bigBlue: {
-    marginTop: 20,
-    fontSize: 20,
-    marginLeft: 10,
-  },
-  listItem:{
-    margin:5,
-    padding:5,
-    backgroundColor:"#FFF",
-    width:"90%",
-    alignSelf:"center",
-    flexDirection:"row",
-    borderRadius:5
-  }
-});
-   */ 
-
-/*  
-<Image source={{uri: imageUrl}}  style={{width:60, height:60, borderRadius:5}} />
-
-const getAllIngr = () => {
-  const url = 'https://www.thecocktaildb.com/api/json/v2/9973533/list.php?i=list';
-  fetch(url)
-  .then((response) => response.json())
-  .then((jsondata) => { 
-      setAllIngr(jsondata.drinks);
-  })
-  .catch((error) => { 
-      Alert.alert('Error', error); 
-  }); 
-}
-
-const Item = ({ item }) => {
-    const url = item.href
-    return (
-      <View style={styles.listItem}>
-          <Image source={{uri:item.thumbnail}}  style={{width:60, height:60, borderRadius:5}} />
-          <View style={{alignItems:"center",flex:1}}>
-              <Text style={{fontWeight:"bold"}} onPress={() => Linking.openURL(url)}>{item.title}</Text>
-          </View>
-        </View>
-    );
-  }
-  
-  return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>My bar screen</Text>
-          <Button
-            title="Go to Details"
-            onPress={() => navigation.navigate('Details')}
-          />
-        </View>
-      );
-
-      <FlatList 
-        style={styles.results}
-        data={recipe} 
-        keyExtractor={item => item.id} 
-        renderItem={({ item }) => <Item item={item}/>} />  
-      </View>  
-}
-*/

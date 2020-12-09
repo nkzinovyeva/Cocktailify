@@ -1,25 +1,42 @@
-import * as React from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator} from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Icons from 'react-native-vector-icons/FontAwesome5';
 import CocktailsScreen from "../screens/CocktailsScreen";
-import CoctailDetails from "../screens/CoctailDetails";
+import CocktailDetails from "../screens/CocktailDetails";
 import MyBarScreen from "../screens/MyBarScreen";
-import DetailsScreen from "../screens/DetailsScreen";
+import IngredientDetails from "../screens/IngredientDetails";
+import BarCocktail from "../screens/BarCocktail";
 import FavouriteScreen from "../screens/FavouriteScreen";
-import UserScreen from "../screens/UserScreen";
+import SearchScreen from "../screens/SearchScreen";
 import ShopListScreen from "../screens/ShopListScreen";
+import AlkoFinder from "../screens/AlkoFinder";
 
 
-const CoctailsStack = createStackNavigator();
+const defaultNavOptions =  {
+  headerStyle: {
+    backgroundColor: 'tomato',
+  },
+  headerTintColor: '#fff',
+  headerTitleStyle: {
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  headerBackTitleStyle: {
+  }
 
-function CoctailsStackScreen() {
+}
+
+const CocktailsStack = createStackNavigator();
+
+function CocktailsStackScreen() {
     return (
-      <CoctailsStack.Navigator>
-        <CoctailsStack.Screen name="Coctails" component={CocktailsScreen} />
-        <CoctailsStack.Screen name="CoctailDetails" component={CoctailDetails} />
-      </CoctailsStack.Navigator>
+      <CocktailsStack.Navigator screenOptions={({ route, navigation }) => (defaultNavOptions)} >
+        <CocktailsStack.Screen name="Cocktails" component={CocktailsScreen} />
+        <CocktailsStack.Screen name="Cocktail Details" component={CocktailDetails} />
+        <CocktailsStack.Screen name="Ingredient Details" component={IngredientDetails} />
+      </CocktailsStack.Navigator>
     );
 }
 
@@ -27,9 +44,11 @@ const MyBarStack = createStackNavigator();
 
 function MyBarStackScreen() {
     return (
-      <MyBarStack.Navigator>
+      <MyBarStack.Navigator screenOptions={({ route, navigation }) => (defaultNavOptions)}>
         <MyBarStack.Screen name="My Bar" component={MyBarScreen} />
-        <MyBarStack.Screen name="Details" component={DetailsScreen} />
+        <MyBarStack.Screen name="Ingredient Details" component={IngredientDetails} />
+        <MyBarStack.Screen name="Cocktail Details" component={CocktailDetails} />
+        <MyBarStack.Screen name="Cocktailify" component={BarCocktail} />
       </MyBarStack.Navigator>
     );
 }
@@ -38,21 +57,36 @@ const FavouriteStack = createStackNavigator();
 
 function FavouriteStackScreen() {
     return (
-      <FavouriteStack.Navigator>
-        <FavouriteStack.Screen name="Favourites" component={FavouriteScreen} />
-        <FavouriteStack.Screen name="Details" component={DetailsScreen} />
+      <FavouriteStack.Navigator screenOptions={({ route, navigation }) => (defaultNavOptions)}>
+        <FavouriteStack.Screen name="Favourite Cocktails" component={FavouriteScreen} />
+        <FavouriteStack.Screen name="Cocktail Details" component={CocktailDetails} />
+        <FavouriteStack.Screen name="Ingredient Details" component={IngredientDetails} />
       </FavouriteStack.Navigator>
     );
 }
 
-const UserStack = createStackNavigator();
+const ShopStack = createStackNavigator();
 
-function UserStackScreen() {
+function ShopStackScreen() {
     return (
-      <UserStack.Navigator>
-        <UserStack.Screen name="User" component={UserScreen} />
-        <UserStack.Screen name="Details" component={DetailsScreen} />
-      </UserStack.Navigator>
+      <ShopStack.Navigator screenOptions={({ route, navigation }) => (defaultNavOptions)}>
+        <ShopStack.Screen name="Shopping List" component={ShopListScreen} />
+        <ShopStack.Screen name="Ingredient Details" component={IngredientDetails} />
+        <ShopStack.Screen name="Cocktail Details" component={CocktailDetails} />
+        <ShopStack.Screen name="Alko Finder" component={AlkoFinder} />
+      </ShopStack.Navigator>
+    );
+}
+
+const SearchStack = createStackNavigator();
+
+function SearchStackScreen() {
+    return (
+      <SearchStack.Navigator screenOptions={({ route, navigation }) => (defaultNavOptions)}>
+        <SearchStack.Screen name="Search" component={SearchScreen} />
+        <SearchStack.Screen name="Cocktail Details" component={CocktailDetails} />
+        <SearchStack.Screen name="Ingredient Details" component={IngredientDetails} />
+      </SearchStack.Navigator>
     );
 }
 
@@ -70,12 +104,14 @@ export default function AppNav() {
               iconName = 'cocktail'
             } else if (route.name === 'My bar') {
               iconName = 'wine-bottle';
+            } else if (route.name === 'Search') {
+              iconName = 'search';
             } else if (route.name === 'Favourites') {
               iconName = 'star';
             } else if (route.name === 'Shopping list') {
               iconName = 'receipt';
-            } else if (route.name === 'User') {
-              iconName = 'user-secret';
+            } else if (route.name === 'Search') {
+              iconName = 'search';
             }
 
             return <Icons name={iconName} size={size} color={color} />;
@@ -86,11 +122,12 @@ export default function AppNav() {
           inactiveTintColor: 'gray',
         }}
       >
-        <MainNav.Screen name="Cocktails" component={CoctailsStackScreen} />
-        <MainNav.Screen name="My bar" component={MyBarStackScreen} />
-        <MainNav.Screen name="Favourites" component={FavouriteStackScreen} />
-        <MainNav.Screen name="Shopping list" component={ShopListScreen} />
-        <MainNav.Screen name="User" component={UserStackScreen} />
+        <MainNav.Screen key="1" name="Cocktails" component={CocktailsStackScreen} />
+        <MainNav.Screen key="2" name="My bar" component={MyBarStackScreen} />
+        <MainNav.Screen key="3" name="Search" component={SearchStackScreen}  />
+        <MainNav.Screen key="4" name="Favourites" component={FavouriteStackScreen} />
+        <MainNav.Screen key="5" name="Shopping list" component={ShopStackScreen} />
+        
       </MainNav.Navigator>
     </NavigationContainer>
   );

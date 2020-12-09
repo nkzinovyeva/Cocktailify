@@ -1,6 +1,6 @@
-//export function google() {
-  //  return 'AIzaSyAl1oM3QhsYzlIndSszRd0JA2E9otPAVO0';
-  //}
+export function google() {
+  return 'AIzaSyAl1oM3QhsYzlIndSszRd0JA2E9otPAVO0';
+}
 
   //export function mapquestapi() {
    // return 'QE8ciOy8Z6GZNLGrXMHDlnTDEt9wF1Ue';
