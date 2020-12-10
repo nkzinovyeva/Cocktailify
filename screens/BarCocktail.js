@@ -79,7 +79,7 @@ export default function BarCocktail({navigation}) {
       .then((response) => response.json())
       .then((jsondata) => {
         if (jsondata.drinks !== "None Found") {
-        setCocktails(jsondata.drinks);
+          setCocktails(jsondata.drinks);
       }})
       .then(setCocktails([]))
       .catch((error) => { 
