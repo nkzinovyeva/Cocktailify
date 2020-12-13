@@ -1,7 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator} from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
 import Icons from 'react-native-vector-icons/FontAwesome5';
 import CocktailsScreen from "../screens/CocktailsScreen";
 import CocktailDetails from "../screens/CocktailDetails";
@@ -12,7 +11,8 @@ import FavouriteScreen from "../screens/FavouriteScreen";
 import SearchScreen from "../screens/SearchScreen";
 import ShopListScreen from "../screens/ShopListScreen";
 import AlkoFinder from "../screens/AlkoFinder";
-
+import UserContext from "./UserContext"
+import * as firebase from 'firebase';
 
 const defaultNavOptions =  {
   headerStyle: {
@@ -25,14 +25,13 @@ const defaultNavOptions =  {
   },
   headerBackTitleStyle: {
   }
-
 }
 
 const CocktailsStack = createStackNavigator();
 
 function CocktailsStackScreen() {
     return (
-      <CocktailsStack.Navigator screenOptions={({ route, navigation }) => (defaultNavOptions)} >
+      <CocktailsStack.Navigator screenOptions={() => (defaultNavOptions)}  >
         <CocktailsStack.Screen name="Cocktails" component={CocktailsScreen} />
         <CocktailsStack.Screen name="Cocktail Details" component={CocktailDetails} />
         <CocktailsStack.Screen name="Ingredient Details" component={IngredientDetails} />
@@ -44,7 +43,7 @@ const MyBarStack = createStackNavigator();
 
 function MyBarStackScreen() {
     return (
-      <MyBarStack.Navigator screenOptions={({ route, navigation }) => (defaultNavOptions)}>
+      <MyBarStack.Navigator screenOptions={() => (defaultNavOptions)}>
         <MyBarStack.Screen name="My Bar" component={MyBarScreen} />
         <MyBarStack.Screen name="Ingredient Details" component={IngredientDetails} />
         <MyBarStack.Screen name="Cocktail Details" component={CocktailDetails} />
@@ -57,7 +56,7 @@ const FavouriteStack = createStackNavigator();
 
 function FavouriteStackScreen() {
     return (
-      <FavouriteStack.Navigator screenOptions={({ route, navigation }) => (defaultNavOptions)}>
+      <FavouriteStack.Navigator screenOptions={() => (defaultNavOptions)}>
         <FavouriteStack.Screen name="Favourite Cocktails" component={FavouriteScreen} />
         <FavouriteStack.Screen name="Cocktail Details" component={CocktailDetails} />
         <FavouriteStack.Screen name="Ingredient Details" component={IngredientDetails} />
@@ -69,7 +68,7 @@ const ShopStack = createStackNavigator();
 
 function ShopStackScreen() {
     return (
-      <ShopStack.Navigator screenOptions={({ route, navigation }) => (defaultNavOptions)}>
+      <ShopStack.Navigator screenOptions={() => (defaultNavOptions)}>
         <ShopStack.Screen name="Shopping List" component={ShopListScreen} />
         <ShopStack.Screen name="Ingredient Details" component={IngredientDetails} />
         <ShopStack.Screen name="Cocktail Details" component={CocktailDetails} />
@@ -82,7 +81,7 @@ const SearchStack = createStackNavigator();
 
 function SearchStackScreen() {
     return (
-      <SearchStack.Navigator screenOptions={({ route, navigation }) => (defaultNavOptions)}>
+      <SearchStack.Navigator screenOptions={() => (defaultNavOptions)}>
         <SearchStack.Screen name="Search" component={SearchScreen} />
         <SearchStack.Screen name="Cocktail Details" component={CocktailDetails} />
         <SearchStack.Screen name="Ingredient Details" component={IngredientDetails} />
@@ -93,8 +92,17 @@ function SearchStackScreen() {
 const MainNav = createBottomTabNavigator();
 
 export default function AppNav() {
+
+  const [user, setUser] = useState('');
+  
+  //Get logged user's uid 
+  firebase.auth().onAuthStateChanged(user => {
+      let uid = user.uid;
+      setUser(user.uid);
+  });
+
   return (
-    <NavigationContainer>
+    <UserContext.Provider value={user}>
       <MainNav.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -129,7 +137,7 @@ export default function AppNav() {
         <MainNav.Screen key="5" name="Shopping list" component={ShopStackScreen} />
         
       </MainNav.Navigator>
-    </NavigationContainer>
+    </UserContext.Provider>
   );
 
 }

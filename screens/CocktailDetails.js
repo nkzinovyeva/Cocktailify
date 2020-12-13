@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ImageBackground, FlatList, Pressable } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { ListItem, Avatar} from 'react-native-elements';
 import { Icon} from 'react-native-elements';
-import {firebaseConfig} from './keys.js';
+import UserContext from "../navigation/UserContext";
 import * as firebase from 'firebase';
 import {keyapi} from './keys.js';
 
 
-const config = firebaseConfig() ;
-  
-if (!firebase.apps.length) {
-    firebase.initializeApp(config);
-}
-
 export default function CocktailDetailsScreen(props) {
 
+    const user = React.useContext(UserContext);
     const cocktailId = props.route.params;
     const key = keyapi();
     const [measurements, setMeas] = useState([]);
@@ -60,7 +56,7 @@ export default function CocktailDetailsScreen(props) {
 
     //Save cocktail to Favorites
     const saveToFav = (item) => {
-        firebase.database().ref("favourites/").push(
+        firebase.database().ref("favourites/" + user).push(
           {'id': item.id, 'title': item.title, 'pic': item.url}
         );
     };
@@ -68,14 +64,17 @@ export default function CocktailDetailsScreen(props) {
     //Render Ingredients
     const ItemIngr = ( {item} ) => {
         return (
-            <View style={styles.spirits}>
+            <View >
                 <Pressable
                     onPress={() =>
                         props.navigation.push("Ingredient Details", item.name)
                     }>
-                     <View>
-                        <Text style={styles.text}>{item.name}</Text>
-                    </View>   
+                    <ListItem>
+                        <ListItem.Content>
+                        <ListItem.Subtitle style={styles.ingr}>{item.name}</ListItem.Subtitle>
+                        </ListItem.Content>
+                        <ListItem.Chevron />
+                    </ListItem>    
                 </Pressable>
             </View>    
         );
@@ -84,9 +83,11 @@ export default function CocktailDetailsScreen(props) {
     //Render Measurements
     const ItemMeasure = ( {item} ) => {
         return (
-            <View style={styles.measures}>
-                <Text style={styles.text}>{item.name}</Text>
-              </View>
+            <ListItem >
+              <ListItem.Content>
+                <ListItem.Subtitle style={styles.ingr}>{item.name}</ListItem.Subtitle>
+              </ListItem.Content>
+            </ListItem>
         );
     };
 
@@ -106,15 +107,17 @@ export default function CocktailDetailsScreen(props) {
             </ImageBackground> 
             <View>
                 <Text style={styles.headers}>Ingredients and servings:</Text>
-                <View style={styles.ingr}>
-                    <FlatList
-                        data={ingredients} 
-                        keyExtractor={(item, index) => index} 
-                        renderItem={({item}) => <ItemIngr item = {item}/>} />
-                    <FlatList
-                        data={measurements} 
-                        keyExtractor={(item, index) => index} 
-                        renderItem={({item}) => <ItemMeasure item = {item}/>}/>
+                <View style={styles.servings}>
+                        <FlatList 
+                            style={{width: '30%'}}
+                            data={measurements} 
+                            keyExtractor={(item, index) => index} 
+                            renderItem={({item}) => <ItemMeasure  item = {item}/>}/>
+                        <FlatList 
+                            style={{width: '70%'}}
+                            data={ingredients} 
+                            keyExtractor={(item, index) => index} 
+                            renderItem={({item}) => <ItemIngr item = {item}/>} />
                 </View> 
                 <Text style={styles.headers}>How to mix:</Text>
                 <Text style={styles.text}>{cocktail.instructions}</Text>
@@ -151,23 +154,12 @@ export default function CocktailDetailsScreen(props) {
             paddingHorizontal: 10,
             textAlign: "center",
         },
-        ingr: {
+        servings: {
             flexDirection: "row",
         },
-        spirits: {
-            alignItems: 'center', 
-            borderColor: 'gray', 
-            borderStyle: 'dotted', 
-            borderRadius: 10, 
-            borderWidth: 1, 
-            marginLeft: 15 
-        },
-        measures: {
-            alignItems: 'flex-start', 
-            borderColor: 'white', 
-            borderStyle: 'dotted', 
-            borderRadius: 5, 
-            borderWidth: 1
+        ingr: {
+            fontSize: 18,
+            color: "gray",
         },
         headers: {
             color: "tomato",

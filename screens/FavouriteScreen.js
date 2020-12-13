@@ -1,17 +1,13 @@
 import  React, { useEffect, useState }  from 'react';
 import { Text, View, FlatList, StyleSheet, Pressable, Image, Modal, Vibration, SafeAreaView, TouchableOpacity} from 'react-native';
 import { ListItem, Avatar} from 'react-native-elements';
-import {firebaseConfig} from './keys.js';
+import UserContext from "../navigation/UserContext";
 import * as firebase from 'firebase';
 import {keyapi} from './keys.js';
 
-const config = firebaseConfig() ;
-  
-if (!firebase.apps.length) {
-    firebase.initializeApp(config);
-}
 export default function FavouriteScreen({ navigation }) {
 
+  const user = React.useContext(UserContext);
   const [items, setItems] = useState([]);
   const [fullData, setFullData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -41,7 +37,7 @@ export default function FavouriteScreen({ navigation }) {
   useEffect(() => {
       firebase
         .database()
-        .ref("favourites/")
+        .ref("favourites/" + user)
         .on("value", (snapshot) => {
           const data = snapshot.val();
           if (data !== null) {
@@ -61,12 +57,12 @@ export default function FavouriteScreen({ navigation }) {
   //Delete Cocktail from DB
   const deleteData = (item) => {
     const key = _.findKey(fullData, item);
-    firebase.database().ref("favourites").child(key).remove();
+    firebase.database().ref("favourites/" + user).child(key).remove();
   };
 
   // get 1 random cocktail
   const getOneRandomCocktail = () => {
-    const url = 'https://www.thecocktaildb.com/api/json/'+ key+ '/random.php';
+    const url = 'https://www.thecocktaildb.com/api/json/' + key + '/random.php';
     fetch(url)
     .then((response) => response.json())
     .then((jsondata) => { 

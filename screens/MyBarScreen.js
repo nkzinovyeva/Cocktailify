@@ -2,20 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Alert, StyleSheet, Text, View, FlatList, TouchableOpacity, Pressable, Image, SafeAreaView } from 'react-native';
 import {ListItem, Avatar} from 'react-native-elements';
 import MyCarousel from '../components/Carousel_ingredient'
-import { Button } from 'react-native-paper';
+import UserContext from "../navigation/UserContext"
 import MySearchBar from '../components/SearchBar';
-import {firebaseConfig} from './keys.js';
 import * as firebase from 'firebase';
 import {keyapi} from './keys.js';
 
-const config = firebaseConfig() ;
-  
-if (!firebase.apps.length) {
-    firebase.initializeApp(config);
-}
-
 export default function MyBarScreen({ navigation }) {
 
+  const user = React.useContext(UserContext);
   const [allIngr, setAllIngr] = useState([]);
   const [filteredIngr, setFilteredIngr] = useState([]);
   const [searchText, setSearchText] = useState('');
@@ -35,7 +29,7 @@ export default function MyBarScreen({ navigation }) {
     let mounted = true;
     firebase
       .database()
-      .ref("bar/")
+      .ref("bar/" + user)
       .on("value", (snapshot) => {
         if(mounted){
           const data = snapshot.val();
@@ -71,7 +65,7 @@ export default function MyBarScreen({ navigation }) {
   //Delete Item from My Bar
   const deleteData = (item) => {
     const key = _.findKey(fullData, item);
-    firebase.database().ref("bar/").child(key).remove();
+    firebase.database().ref("bar/" + user).child(key).remove();
   };
 
   //Get all possible ingredients

@@ -1,9 +1,14 @@
 import React, { useState, useEffect} from 'react';
-import { Alert, StyleSheet, Text, View} from 'react-native';
+import { Alert, StyleSheet, Text, View, Pressable} from 'react-native';
+import { Icon } from 'react-native-elements'
+import UserContext from "../navigation/UserContext"
 import MyCarousel from '../components/Carousel_cocktail';
 import {keyapi} from './keys.js';
+import * as firebase from 'firebase';
 
-export default function CocktailsScreen({ navigation }) {
+export default function CocktailsScreen({navigation}) {
+
+  const user = React.useContext(UserContext);
 
   const [latestCocktails, setLatestCocktails] = useState([]);
   const [popCocktails, setPopCocktails] = useState([]);
@@ -15,6 +20,27 @@ export default function CocktailsScreen({ navigation }) {
     getPopCocktails();
     getLatestCocktails();
   }, []); 
+
+  const logoff = () => {
+    firebase.auth()
+      .signOut()
+      .then(() => {
+        firebase.database().ref().off();
+        console.log('Sign-out successful');
+      })
+  }
+
+  //header component
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable onPress={logoff}>
+          <Icon name='sign-out-alt' type='font-awesome-5' color ='white' marginRight={20}/>
+        </Pressable>
+      ),
+    });
+  }, [navigation]);
+
 
   // get 10 random cocktails for carousel
   const getRandomCocktails = () => {

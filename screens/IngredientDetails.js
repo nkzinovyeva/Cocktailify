@@ -2,28 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ImageBackground, FlatList, SafeAreaView } from "react-native";
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import {  Icon, ListItem, Avatar} from 'react-native-elements';
-import {firebaseConfig, keyapi} from './keys.js';
+import UserContext from "../navigation/UserContext"
 import * as firebase from 'firebase';
-
-const config = firebaseConfig() ;
-  
-if (!firebase.apps.length) {
-    firebase.initializeApp(config);
-}
+import {keyapi} from './keys.js';
 
 export default function CocktailDetailsScreen({route, navigation}) {
 
-    const ingrName = route.params;
-    const key = keyapi();
-    const [allCocktails, setAllCocktails] = useState([]);
-    const url = "https://www.thecocktaildb.com/api/json/" + key + "/search.php?i=" + ingrName;
-    const [ingredient, setIngredient] = useState({
+  const user = React.useContext(UserContext);
+  const ingrName = route.params;
+  const key = keyapi();
+  const [allCocktails, setAllCocktails] = useState([]);
+  const url = "https://www.thecocktaildb.com/api/json/" + key + "/search.php?i=" + ingrName;
+  const [ingredient, setIngredient] = useState({
         id: "",  
         title: "",
         description: "",
         abv: "",
         url: "."
-    });
+  });
     
     //ingredient info
     useEffect(() => {
@@ -54,13 +50,13 @@ export default function CocktailDetailsScreen({route, navigation}) {
 
     //Save ingredient to MyBar
     const saveMyBar = (item) => {
-      firebase.database().ref("bar/").push(
+      firebase.database().ref("bar/" + user).push(
         {'id': item.id, 'name': item.title});
     };
 
     //Save ingredient to ShoppingList
     const saveToShop = (item) => {
-      firebase.database().ref("shoppings/").push(
+      firebase.database().ref("shoppings/" + user).push(
         {'id': item.id, 'title': item.title, 'pic': item.url}
         );
     };

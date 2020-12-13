@@ -1,17 +1,12 @@
 import  React, { useEffect, useState }  from 'react';
 import { Text, View, FlatList, StyleSheet, Image, Pressable, SafeAreaView, TouchableOpacity} from 'react-native';
 import { ListItem, Avatar} from 'react-native-elements';
-import {firebaseConfig} from './keys.js';
+import UserContext from "../navigation/UserContext"
 import * as firebase from 'firebase';
-
-const config = firebaseConfig() ;
-  
-if (!firebase.apps.length) {
-    firebase.initializeApp(config);
-}
 
 export default function ShopListScreen({ navigation }) {
   
+  const user = React.useContext(UserContext);
   const [items, setItems] = useState([]);
   const [fullData, setFullData] = useState([]);
 
@@ -34,7 +29,7 @@ export default function ShopListScreen({ navigation }) {
   useEffect(() => {
       firebase
         .database()
-        .ref("shoppings/")
+        .ref("shoppings/" + user)
         .on("value", (snapshot) => {
             const data = snapshot.val();
             if (data !== null) {
@@ -54,7 +49,7 @@ export default function ShopListScreen({ navigation }) {
   //Delete Item from Shopping List
   const deleteData = (item) => {
     const key = _.findKey(fullData, item);
-    firebase.database().ref("shoppings").child(key).remove();
+    firebase.database().ref("shoppings/" + user).child(key).remove();
   };
 
   //Render Items 

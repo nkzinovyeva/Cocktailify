@@ -1,22 +1,18 @@
 import React, {useEffect} from 'react';
-import{ View , Button, StyleSheet, InputAccessoryView, Text} from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import{ View , StyleSheet, Text} from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import * as Location from 'expo-location';
 import {google} from './keys.js';
 
 export default function MapFinder() {
+  
   const [location, setLocation] = React.useState(null);
-
-  const [address, SetAddress] = React.useState('');
   const [region, SetRegion] = React.useState({latitude: 0, longitude: 0, latitudeDelta: 1, longitudeDelta: 1});
   const [markers, SetMarkers] = React.useState([]);
-  //const key = mapquestapi();
   const key = google();
   
   useEffect(() => {
       getLocation();
-      
     }, []); 
   
   const getLocation = async () => {

@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, StyleSheet, Text, SafeAreaView, View, TouchableOpacity, FlatList } from 'react-native';
 import {ListItem, Avatar} from 'react-native-elements';
-import {firebaseConfig} from './keys.js';
+import UserContext from "../navigation/UserContext"
 import * as firebase from 'firebase';
 import SelectMultiple from 'react-native-select-multiple';
 import {keyapi} from './keys.js';
 
-
-const config = firebaseConfig() ;
-  
-if (!firebase.apps.length) {
-    firebase.initializeApp(config);
-}
-
 export default function BarCocktail({navigation}) {
   
+  const user = React.useContext(UserContext);
   const [items, setItems] = useState([]);
   const [selected, setSelected] = useState([]);
   const [cocktails, setCocktails] = useState([]);
@@ -26,7 +20,7 @@ export default function BarCocktail({navigation}) {
   useEffect(() => {
     firebase
         .database()
-        .ref("bar/")
+        .ref("bar/" + user)
         .on("value", (snapshot) => {
             const data = snapshot.val();
             if (data !== null) {
@@ -42,11 +36,9 @@ export default function BarCocktail({navigation}) {
   //Render Items for the checkbox
   const Item = ({item}) => {
     return (
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
       <View style={styles.text}>
         <Text >{item}</Text>
       </View>
-    </View>
     );
   };
 
@@ -109,7 +101,7 @@ export default function BarCocktail({navigation}) {
           {items.length === 0 &&
           <Text style={styles.replacement}>You haven't added anything to your Bar yet</Text>
           }
-          <View>
+          <View style={{ flex: 1.5}}>
             <SelectMultiple
               items={items}
               selectedItems={selected}
