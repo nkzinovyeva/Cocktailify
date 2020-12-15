@@ -2,7 +2,7 @@
 #### *
 #### An individual project completed as the final work for the Mobile Programming course, Haaga-Helia UAS, 2020.
 #### *
-#### Enjoy cocktails wherever and whenever you want. Choose, explore, add to favourites, save ingredients to your shopping list! For Finnish users, search for the nearest Alko stores is available.
+#### Enjoy cocktails wherever and whenever you want. Choose, explore, add to favourites, save ingredients to your shopping list! For Finnish users, search for the nearest Alko stores is available. The app even works as a cocktail shaker - shake it and it will offer you a new cocktail every time, you just have to choose! 
 #### *
 Android users can benefit from downloading and installing the app through Expo.
 
