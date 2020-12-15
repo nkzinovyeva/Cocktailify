@@ -7,6 +7,7 @@ import UserContext from "../navigation/UserContext";
 import * as firebase from 'firebase';
 import {keyapi} from './keys.js';
 
+
 export default function CocktailDetailsScreen(props) {
     
     // Load the full build.
@@ -39,7 +40,7 @@ export default function CocktailDetailsScreen(props) {
                 }
             } 
             for (let key in obj) {
-                 if (key.startsWith("strMeasure") && obj[key] !== null ) {
+                 if (key.startsWith("strMeasure") && obj[key] !== null && obj[key].length > 0 ) {
                     measurements.push({dose: obj[key]});
                 }
             }
@@ -113,12 +114,12 @@ export default function CocktailDetailsScreen(props) {
                     <FlatList 
                         style={{width: '40%'}}
                         data={measurements} 
-                        keyExtractor={(item, index) => index} 
+                        keyExtractor={(item, index) => item+index} 
                         renderItem={({item}) => <ItemMeasure  item = {item}/>}/>
                     <FlatList 
                         style={{width: '60%'}}
                         data={ingredients} 
-                        keyExtractor={(item, index) => index} 
+                        keyExtractor={(item, index) => item+index} 
                         renderItem={({item}) => <ItemIngr item = {item}/>} />   
                 </View> 
                 <Text style={styles.headers}>How to mix:</Text>
@@ -177,21 +178,3 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
     },
 });
-
-/*
-
-<SectionList 
-                    horizontal={true}
-                    sections={[ 
-                        { data: ingredients, renderItem: ({ item, index, section: { data } }) => <Text>{item.name}</Text> }, 
-                        { data: measurements, renderItem: ({ item, index, section: { data } }) => <Text>{item.dose}</Text>}, 
-                        ]} 
-                    keyExtractor={(item, index) => item.name + index} 
-                    />
-<View style={styles.servings}>
- const createServ = () => {
-        //console.log(ingredients);
-        let merge = Object.assign({}, ingredients, measurements);
-        console.log(merge);
-    }
-                            */

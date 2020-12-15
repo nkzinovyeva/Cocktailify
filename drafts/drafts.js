@@ -1,3 +1,4 @@
+/*
 import React, { useState, useEffect, useRef } from 'react';
 import { Alert, StyleSheet, Text, View, Modal, TouchableHighlight, FlatList} from 'react-native';
 import { Accelerometer } from "expo-sensors";
@@ -98,7 +99,7 @@ useEffect(() => {
 }, []); 
 
 const [modalVisible, setModalVisible] = useState(false);
-*/
+
 
 // get 10 random cocktails for carousel
 const getRandomCocktails = () => {
@@ -157,7 +158,7 @@ const Item = ({ item }) => {
   return (
       <Text>{item.strDrink}</Text>
   );
-} */
+} 
 
 return (
   <View style={{flex: 1, backgroundColor:'white', padding: 10, }} >
@@ -297,3 +298,21 @@ return (
    </TouchableOpacity>
   );
 };*/
+
+/*
+
+<SectionList 
+                    horizontal={true}
+                    sections={[ 
+                        { data: ingredients, renderItem: ({ item, index, section: { data } }) => <Text>{item.name}</Text> }, 
+                        { data: measurements, renderItem: ({ item, index, section: { data } }) => <Text>{item.dose}</Text>}, 
+                        ]} 
+                    keyExtractor={(item, index) => item.name + index} 
+                    />
+<View style={styles.servings}>
+ const createServ = () => {
+        //console.log(ingredients);
+        let merge = Object.assign({}, ingredients, measurements);
+        console.log(merge);
+    }
+                            */

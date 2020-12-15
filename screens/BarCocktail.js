@@ -117,7 +117,7 @@ export default function BarCocktail({navigation}) {
         <View style={{ flex: 2, justifyContent: 'center', }}>
           <FlatList 
             data={cocktails}
-            keyExtractor={(item, index) => index} 
+            keyExtractor={(item, index) => item + index} 
             renderItem={({item}) => <ItemCoctail item = {item}/>}
             />  
           </View>

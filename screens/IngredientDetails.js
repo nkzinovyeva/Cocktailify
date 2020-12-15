@@ -86,7 +86,7 @@ export default function CocktailDetailsScreen({route, navigation}) {
       <View>
         <FlatList
           data={allCocktails}
-          keyExtractor={(item) => item.idDrink} 
+          keyExtractor={(item, index) => item.idDrink+index} 
           renderItem={({item}) => <Item item = {item}/>}
           ListHeaderComponent={
             <View>

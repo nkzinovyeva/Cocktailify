@@ -4,6 +4,7 @@ import { ListItem, Avatar} from 'react-native-elements';
 import UserContext from "../navigation/UserContext";
 import * as firebase from 'firebase';
 import {keyapi} from './keys.js';
+import { Accelerometer } from "expo-sensors";
 
 const { width } = Dimensions.get("screen");
 
@@ -16,19 +17,42 @@ export default function FavouriteScreen({ navigation }) {
   const [oneRandCocktail, setOneRandCocktail] = useState([]);
   const key = keyapi(); 
 
+
+  const configureShake = onShake => {
+    // update value every 100ms faster (20ms) or slower shakes (500ms)
+    Accelerometer.setUpdateInterval(400);
+
+    const onUpdate = ({ x, y, z }) => {
+      const acceleration = Math.sqrt(x * x + y * y + z * z);
+
+      // Adjust sensibility
+      const sensibility = 8;
+
+      if (acceleration >= sensibility) {
+        onShake(acceleration);
+      }
+    };
+    Accelerometer.addListener(onUpdate);
+  };
+
   //header component
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Pressable onPress={() => {
           setModalVisible(true); 
-          getOneRandomCocktail()
-          Vibration.vibrate()}}>
-            <Image 
-              source={require('../assets/shaker_2.png')}
-              //Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
-              style={{ width: 35, height: 35, marginRight: 20, }}
-            />
+          getOneRandomCocktail();
+          Vibration.vibrate();
+          const subscription = configureShake(acceleration => {
+            getOneRandomCocktail();;
+          });
+        }}
+        >
+          <Image 
+            source={require('../assets/shaker_2.png')}
+            //Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+            style={{ width: 35, height: 35, marginRight: 20, }}
+          />
         </Pressable>
       ),
     });
@@ -103,6 +127,7 @@ export default function FavouriteScreen({ navigation }) {
         onPress={() => {
           navigation.navigate("Cocktail Details", item.idDrink);
           setModalVisible(false);
+          Accelerometer.removeAllListeners();
         }}
       >
         <Text style={{...styles.header,...{color: "tomato", fontSize: 25, textAlign: "center"} }}>{item.strDrink}</Text>
@@ -125,7 +150,7 @@ export default function FavouriteScreen({ navigation }) {
       <View style={styles.screen}>
         <FlatList 
           data={items}
-          keyExtractor={(item) => item.id} 
+          keyExtractor={(item, index) => item.id+index} 
           renderItem={({item}) => <Item item = {item}/>}
           ListHeaderComponent={<Text style={styles.header}>Favourite cocktails</Text>}
         />
@@ -138,10 +163,11 @@ export default function FavouriteScreen({ navigation }) {
               <View style={styles.modalView}>
                 <FlatList 
                   data={oneRandCocktail}
-                  keyExtractor={(item) => item.idDrink} 
+                  keyExtractor={(item, index) => item.idDrink+index} 
                   renderItem={({item}) => <ItemMod item = {item}/>}
                   />
                   <Pressable onPress={() => setModalVisible(false)}>
+                      <Text style={{...styles.replacement,...{fontSize: 14, fontWeight: "normal",}}}>Give your phone a good shake to mix another cocktail!</Text>
                       <Text style={{...styles.replacement, ...{textAlign: "right"}}}>Close</Text>
                   </Pressable>
               </View>

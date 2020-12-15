@@ -83,7 +83,7 @@ export default function ShopListScreen({ navigation }) {
         }
         <FlatList 
           data={items}
-          keyExtractor={(item, index) => index} 
+          keyExtractor={(item, index) => item + index} 
           renderItem={({item}) => <Item item = {item}/>}
           ListHeaderComponent={<Text style={styles.header} >My shopping list</Text>}
         />  

@@ -28,6 +28,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "Enjoy cocktails wherever and whenever you want. Choose, explore, add to favourites, save ingredients to your shopping list! Made by Natalia Zinovyeva as a study project for the \"Mobile Programming\" course. Helsinki, 2020."
+    "description": "Enjoy cocktails wherever and whenever you want. Choose, explore, add to favourites, save ingredients to your shopping list! The app even works as a cocktail shaker - shake it and it will offer you a new cocktail every time, you just have to choose! Made by Natalia Zinovyeva as a study project for the \"Mobile Programming\" course. Helsinki, 2020."
   }
 }
