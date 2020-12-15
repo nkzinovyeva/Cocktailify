@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ImageBackground, FlatList, Pressable, SectionList } from "react-native";
+import { View, Text, StyleSheet, ImageBackground, FlatList, Pressable } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { ListItem } from 'react-native-elements';
 import { Icon} from 'react-native-elements';
