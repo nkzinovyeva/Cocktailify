@@ -19,18 +19,17 @@ export default function BarCocktail({navigation}) {
 
   useEffect(() => {
     firebase
-        .database()
-        .ref("bar/" + user)
-        .on("value", (snapshot) => {
-            const data = snapshot.val();
-            if (data !== null) {
-              const values = Object.values(data);
-              console.log(values);
-              setItems(_.map(values, 'name'));
-            } else {
-              setItems([]);
-            }
-        });
+      .database()
+      .ref("bar/" + user)
+      .on("value", (snapshot) => {
+        const data = snapshot.val();
+        if (data !== null) {
+          const values = Object.values(data);
+          setItems(_.map(values, 'name'));
+        } else {
+          setItems([]);
+        }
+      });
   }, []);
 
   //Render Items for the checkbox
@@ -48,7 +47,7 @@ export default function BarCocktail({navigation}) {
       <TouchableOpacity
         onPress={() =>
           navigation.push("Cocktail Details", item.idDrink)
-      }
+        }
       >
         <ListItem bottomDivider>
           <Avatar source={{uri: item.strDrinkThumb}} />
@@ -61,10 +60,10 @@ export default function BarCocktail({navigation}) {
     );
   };
 
+  //Get cocktails multiselection
   const getCoctails = () => {
     const values = Object.values(selected);
     const multiIngr = (_.map(values, 'value')).join();
-    console.log(multiIngr)
     if (multiIngr.length > 0) {
       const url = 'https://www.thecocktaildb.com/api/json/' + key + '/filter.php?i=' + multiIngr;
       fetch(url)
@@ -85,7 +84,6 @@ export default function BarCocktail({navigation}) {
   //Selection handler
   const onSelectionsChange = (selected) => {
     setSelected(selected);
-    console.log(selected)
   }
 
   //Button
@@ -97,29 +95,32 @@ export default function BarCocktail({navigation}) {
 
   return (
     <SafeAreaView style={styles.screen}>
-          <Text style={styles.header} >My Bar</Text>
-          {items.length === 0 &&
-          <Text style={styles.replacement}>You haven't added anything to your Bar yet</Text>
-          }
-          <View style={{ flex: 1.5}}>
-            <SelectMultiple
-              items={items}
-              selectedItems={selected}
-              renderLabel={(item) => <Item item = {item}/>}
-              onSelectionsChange={onSelectionsChange}
-            /> 
-            <AppButton title="Cheers!" onPress={getCoctails}/>
+      <Text style={styles.header} >My Bar</Text>
+        {items.length === 0 &&
+        <View>
+          <Text style={styles.replacement}>You haven't added anything to your Bar yet </Text>
+          <Text style={{...styles.replacement,...{fontSize: 14, fontWeight: "normal"}}}>To add the ingredients to My Bar, explore the ingredients and tap the "My Bar" icon. To delete an item, long-press item's name in the list on My Bar page</Text>
+        </View>
+        }
+        <View style={{ flex: 2}}>
+          <SelectMultiple
+            items={items}
+            selectedItems={selected}
+            renderLabel={(item) => <Item item = {item}/>}
+            onSelectionsChange={onSelectionsChange}
+          /> 
+          <AppButton title="Cheers!" onPress={getCoctails}/>
+        </View>
+        {cocktails.length === 0 &&
+          <Text style={styles.replacement}>No coctails found, try different combinations!</Text>
+        }
+        <View style={{ flex: 2, justifyContent: 'center', }}>
+          <FlatList 
+            data={cocktails}
+            keyExtractor={(item, index) => index} 
+            renderItem={({item}) => <ItemCoctail item = {item}/>}
+            />  
           </View>
-          {cocktails.length === 0 &&
-            <Text style={styles.replacement}>No coctails found, try different combinations!</Text>
-          }
-          <View style={{ flex: 2, justifyContent: 'center', }}>
-            <FlatList 
-              data={cocktails}
-              keyExtractor={(item, index) => index} 
-              renderItem={({item}) => <ItemCoctail item = {item}/>}
-              />  
-            </View>
     </SafeAreaView> 
   );
 }
@@ -151,20 +152,20 @@ const styles = StyleSheet.create({
   text: {
     color: "gray",
     marginHorizontal: 20,
-},
-appButtonContainer: {
-  elevation: 15,
-  backgroundColor: "tomato",
-  borderRadius: 10,
-  paddingVertical: 10,
-  paddingHorizontal: 12,
-  margin: 10,
-},
-appButtonText: {
-  fontSize: 15,
-  color: "#fff",
-  fontWeight: "bold",
-  alignSelf: "center",
-  textTransform: "uppercase"
-}
+  },
+  appButtonContainer: {
+    elevation: 15,
+    backgroundColor: "tomato",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    margin: 10,
+  },
+  appButtonText: {
+    fontSize: 15,
+    color: "#fff",
+    fontWeight: "bold",
+    alignSelf: "center",
+    textTransform: "uppercase"
+  }
 });

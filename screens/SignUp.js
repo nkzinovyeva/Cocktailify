@@ -42,13 +42,12 @@ export default function Signup({ navigation }) {
     return (
         <View style={styles.container}>
             <Image
-                style={{ width: 150, height: 150 }}
-                source={require('../components/cocktails.png')}
+                style={{ width: 150, height: 150, marginTop: 30 }}
+                source={require('../assets/logo.png')}
             />
             <TextInput
                 style={styles.input}
                 placeholder="E-mail"
-                placeholderTextColor="#aaaaaa"
                 onChangeText={(text) => setEmail(text)}
                 value={email}
                 autoCapitalize="none"
@@ -56,7 +55,6 @@ export default function Signup({ navigation }) {
             <TextInput
                 style={styles.input}
                 placeholder="Password"
-                placeholderTextColor="#aaaaaa"
                 onChangeText={(text) => setPassword(text)}
                 value={password}
                 secureTextEntry={true}
@@ -64,9 +62,8 @@ export default function Signup({ navigation }) {
             />
             <TextInput
                 style={styles.input}
-                placeholderTextColor="#aaaaaa"
-                secureTextEntry
                 placeholder='Confirm Password'
+                secureTextEntry={true}
                 onChangeText={(text) => setConfirmPassword(text)}
                 value={confirmPassword}
                 underlineColorAndroid="transparent"

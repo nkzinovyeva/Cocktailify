@@ -11,8 +11,8 @@ import FavouriteScreen from "../screens/FavouriteScreen";
 import SearchScreen from "../screens/SearchScreen";
 import ShopListScreen from "../screens/ShopListScreen";
 import AlkoFinder from "../screens/AlkoFinder";
-import UserContext from "./UserContext"
-import * as firebase from 'firebase';
+//import UserContext from "./UserContext"
+//import * as firebase from 'firebase';
 
 const defaultNavOptions =  {
   headerStyle: {
@@ -93,16 +93,18 @@ const MainNav = createBottomTabNavigator();
 
 export default function AppNav() {
 
+  /*
   const [user, setUser] = useState('');
   
-  //Get logged user's uid 
+  //Get logged user's uid
   firebase.auth().onAuthStateChanged(user => {
-      let uid = user.uid;
-      setUser(user.uid);
+    let uid = user.uid;
+    setUser(user.uid);
   });
+  */
 
   return (
-    <UserContext.Provider value={user}>
+    //<UserContext.Provider value={user}>
       <MainNav.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -137,7 +139,7 @@ export default function AppNav() {
         <MainNav.Screen key="5" name="Shopping list" component={ShopStackScreen} />
         
       </MainNav.Navigator>
-    </UserContext.Provider>
+    //</UserContext.Provider>
   );
 
 }

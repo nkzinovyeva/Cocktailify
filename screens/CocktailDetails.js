@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ImageBackground, FlatList, Pressable } from "react-native";
+import { View, Text, StyleSheet, ImageBackground, FlatList, Pressable, SectionList } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { ListItem, Avatar} from 'react-native-elements';
+import { ListItem } from 'react-native-elements';
 import { Icon} from 'react-native-elements';
 import UserContext from "../navigation/UserContext";
 import * as firebase from 'firebase';
 import {keyapi} from './keys.js';
 
-
 export default function CocktailDetailsScreen(props) {
+    
+    // Load the full build.
+  const _ = require("lodash");
 
     const user = React.useContext(UserContext);
     const cocktailId = props.route.params;
@@ -38,7 +40,7 @@ export default function CocktailDetailsScreen(props) {
             } 
             for (let key in obj) {
                  if (key.startsWith("strMeasure") && obj[key] !== null ) {
-                    measurements.push({name: obj[key]});
+                    measurements.push({dose: obj[key]});
                 }
             }
             setCocktail({
@@ -52,7 +54,7 @@ export default function CocktailDetailsScreen(props) {
             });
           })
           .catch((error) => console.log(error));
-      }, []);
+    }, []);
 
     //Save cocktail to Favorites
     const saveToFav = (item) => {
@@ -85,7 +87,7 @@ export default function CocktailDetailsScreen(props) {
         return (
             <ListItem >
               <ListItem.Content>
-                <ListItem.Subtitle style={styles.ingr}>{item.name}</ListItem.Subtitle>
+                <ListItem.Subtitle style={styles.ingr}>{item.dose}</ListItem.Subtitle>
               </ListItem.Content>
             </ListItem>
         );
@@ -108,16 +110,16 @@ export default function CocktailDetailsScreen(props) {
             <View>
                 <Text style={styles.headers}>Ingredients and servings:</Text>
                 <View style={styles.servings}>
-                        <FlatList 
-                            style={{width: '30%'}}
-                            data={measurements} 
-                            keyExtractor={(item, index) => index} 
-                            renderItem={({item}) => <ItemMeasure  item = {item}/>}/>
-                        <FlatList 
-                            style={{width: '70%'}}
-                            data={ingredients} 
-                            keyExtractor={(item, index) => index} 
-                            renderItem={({item}) => <ItemIngr item = {item}/>} />
+                    <FlatList 
+                        style={{width: '40%'}}
+                        data={measurements} 
+                        keyExtractor={(item, index) => index} 
+                        renderItem={({item}) => <ItemMeasure  item = {item}/>}/>
+                    <FlatList 
+                        style={{width: '60%'}}
+                        data={ingredients} 
+                        keyExtractor={(item, index) => index} 
+                        renderItem={({item}) => <ItemIngr item = {item}/>} />   
                 </View> 
                 <Text style={styles.headers}>How to mix:</Text>
                 <Text style={styles.text}>{cocktail.instructions}</Text>
@@ -127,51 +129,69 @@ export default function CocktailDetailsScreen(props) {
                 <Text style={styles.text}>{cocktail.category}, {cocktail.type}</Text>
             </View>
         </ScrollView>
-      );
-    };
+    );
+};
     
-    const styles = StyleSheet.create({
-        screen: {
-            flex: 1,
-            backgroundColor: "white",
-        },
-        buttons: {
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-            alignSelf: 'flex-end'
-        },
-        bgImage: {
-            width: "100%",
-            height: 400,
-            justifyContent: 'space-between',
-        },
-        title: {
-            fontSize: 30,
-            color: "white",
-            fontWeight: "bold",
-            backgroundColor: "rgba(0,0,0,0.3)",
-            paddingVertical: 5,
-            paddingHorizontal: 10,
-            textAlign: "center",
-        },
-        servings: {
-            flexDirection: "row",
-        },
-        ingr: {
-            fontSize: 18,
-            color: "gray",
-        },
-        headers: {
-            color: "tomato",
-            fontSize: 20,
-            fontWeight: "bold", 
-            textAlign: "left",
-            fontWeight: "bold",
-            margin: 15
-        },
-        text: {
-            fontSize: 18,
-            color: "gray",
-            marginHorizontal: 20,
-        },
-    });
+const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: "white",
+    },
+    buttons: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        alignSelf: 'flex-end'
+    },
+    bgImage: {
+        width: "100%",
+        height: 400,
+        justifyContent: 'space-between',
+    },
+    title: {
+        fontSize: 30,
+        color: "white",
+        fontWeight: "bold",
+        backgroundColor: "rgba(0,0,0,0.3)",
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        textAlign: "center",
+    },
+    servings: {
+        flexDirection: "row",
+    },
+    ingr: {
+        fontSize: 14,
+        color: "gray",
+    },
+    headers: {
+        color: "tomato",
+        fontSize: 20,
+        fontWeight: "bold", 
+        textAlign: "left",
+        fontWeight: "bold",
+        margin: 15
+    },
+    text: {
+        fontSize: 18,
+        color: "gray",
+        marginHorizontal: 20,
+    },
+});
+
+/*
+
+<SectionList 
+                    horizontal={true}
+                    sections={[ 
+                        { data: ingredients, renderItem: ({ item, index, section: { data } }) => <Text>{item.name}</Text> }, 
+                        { data: measurements, renderItem: ({ item, index, section: { data } }) => <Text>{item.dose}</Text>}, 
+                        ]} 
+                    keyExtractor={(item, index) => item.name + index} 
+                    />
+<View style={styles.servings}>
+ const createServ = () => {
+        //console.log(ingredients);
+        let merge = Object.assign({}, ingredients, measurements);
+        console.log(merge);
+    }
+                            */

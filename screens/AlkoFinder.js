@@ -12,9 +12,10 @@ export default function MapFinder() {
   const key = google();
   
   useEffect(() => {
-      getLocation();
-    }, []); 
+    getLocation();
+  }, []); 
   
+  //get location
   const getLocation = async () => {
     //Check permission
     let {status} = await Location.requestPermissionsAsync();
@@ -29,14 +30,16 @@ export default function MapFinder() {
         SetRegion({latitude: lat, longitude: lng, latitudeDelta: 0.05, longitudeDelta: 0.05});
         ShowMarkers(lat, lng);
     }
-};
+  };
 
-let text = 'Waiting for location...';
-    if (location) {
-        text = '';
-}
+  //"waiting" text
+  let text = 'Waiting for location...';
+      if (location) {
+          text = '';
+  }
   
-const ShowMarkers = (lat, lng) => {
+  //markers for the stores
+  const ShowMarkers = (lat, lng) => {
     const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' + lat +','+ lng + '&radius=5000&keyword=Alko&key=' + key;
     fetch(url)
     .then((response) => response.json())
@@ -48,42 +51,43 @@ const ShowMarkers = (lat, lng) => {
     }); 
   }
   
-return (
-  <View style={styles.container}>
+  return (
+    <View style={styles.container}>
       <Text>{text}</Text>
-    <MapView 
-        provider={PROVIDER_GOOGLE}
-        style = {{flex: 1}}
-        region={region}>
-    {markers.map((marker, index) => (
-      <Marker
-        key={index}
-        coordinate={{
-          latitude: marker.geometry.location.lat, 
-          longitude: marker.geometry.location.lng
-        }}
-        title={marker.name}
-        description={marker.vicinity}
-      />
-      ))
-    }
-    </MapView>
-  </View>
-)
+      <MapView 
+          provider={PROVIDER_GOOGLE}
+          style = {{flex: 1}}
+          region={region}
+    >
+      {markers.map((marker, index) => (
+        <Marker
+          key={index}
+          coordinate={{
+            latitude: marker.geometry.location.lat, 
+            longitude: marker.geometry.location.lng
+          }}
+          title={marker.name}
+          description={marker.vicinity}
+        />
+        ))
+      }
+      </MapView>
+    </View>
+  )
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    textInputContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      borderTopWidth: 1,
-      backgroundColor: 'white',
-    },
-    textInput: {
-      flex: 1,
-      paddingLeft: 10,
-    }, 
-  });
+  container: {
+    flex: 1,
+  },
+  textInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    backgroundColor: 'white',
+  },
+  textInput: {
+    flex: 1,
+    paddingLeft: 10,
+  }, 
+});

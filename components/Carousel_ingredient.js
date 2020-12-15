@@ -17,7 +17,7 @@ const renderItem = ({item}) => {
     }
       onLongPress={() => {props.deleteData(item)}}
     >
-        <View style={{alignItems: 'center'}}>
+        <View style={styles.carousel}>
             <Image source={{uri: url}} style={styles.image}></Image>
             <View >
               <Text style={styles.text}>{item.name}</Text> 
@@ -29,17 +29,21 @@ const renderItem = ({item}) => {
 
 
 return (
-    <View style={{ flex: 1, flexDirection:'row', justifyContent: 'center', }}>
-        <Carousel layout={'default'}
-                ref={(c) => {_carousel = c;}}
-                data={props.data}
-                keyExtractor={(item) => item.id}
-                firstItem={3}
-                inactiveSlideOpacity={0.6}
-                inactiveSlideScale={0.8}
-                renderItem={renderItem}
-                sliderWidth={width-40}
-                itemWidth={120}/>
+  <View style={{ flex: 1, flexDirection:'row', justifyContent: 'center', alignItems: 'center',}}>
+  <Carousel 
+          layout={'default'}
+          ref={(c) => {_carousel = c;}}
+          data={props.data}
+          keyExtractor={(item) => item.id}
+          firstItem={3}
+          inactiveSlideOpacity={0.6}
+          inactiveSlideScale={0.8}
+          renderItem={renderItem}
+          sliderWidth={width-20}
+          lockScrollWhileSnapping={true}
+          itemWidth={width/3}
+          slideStyle={{ flex: 1 }}
+        />
     </View>   
 )
 }
@@ -47,16 +51,14 @@ return (
 const styles = StyleSheet.create({
   carousel: {
     backgroundColor: 'white',
-    padding: 5,
-    marginLeft: 10,
-    marginRight: 10,
+    alignItems: 'center'
   },
   image: { 
     width: width/3, 
-    height: width/3,  
-    borderRadius: 5, 
-    overlayColor: "tomato",  
-    opacity: 0.8, 
+    height: width/3, 
+    borderRadius: 20, 
+    overlayColor: "white",  
+    opacity: 1, 
     resizeMode: "cover", 
 },
   text: {
@@ -64,7 +66,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold", 
     textAlign: "left",
-    padding: 5
   }
 });  
   

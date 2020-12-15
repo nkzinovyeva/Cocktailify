@@ -19,12 +19,12 @@ const defaultNavOptions =  {
 }
 
 const LoginStackNavigator = () => {
-    return (
-        <Stack.Navigator screenOptions={({ route, navigation }) => (defaultNavOptions)} >
-            <Stack.Screen name="Sign In" component={SignIn} />
-            <Stack.Screen name="Sign up" component={Signup} />
-        </Stack.Navigator>
-    );
+  return (
+    <Stack.Navigator screenOptions={() => (defaultNavOptions)} >
+      <Stack.Screen name="Sign In" component={SignIn} />
+      <Stack.Screen name="Sign up" component={Signup} />
+    </Stack.Navigator>
+  );
 }
 
 export {LoginStackNavigator};

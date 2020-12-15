@@ -26,12 +26,10 @@ export default function MyBarScreen({ navigation }) {
 
   //Set up DB and get all items
   useEffect(() => {
-    let mounted = true;
     firebase
       .database()
       .ref("bar/" + user)
       .on("value", (snapshot) => {
-        if(mounted){
           const data = snapshot.val();
           if (data !== null) {
             const keys = Object.keys(data);
@@ -40,22 +38,23 @@ export default function MyBarScreen({ navigation }) {
             keys.forEach((key, i) => result[key] = values[i]);
             setMyBar(values);
             setFullData(result); 
-        }} else {
+        } else {
           setMyBar([]);
           setFullData([]);
         }
-        return () => mounted = false;
       });
   }, []);
 
+  //header component
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Pressable onPress={() => navigation.navigate("Cocktailify", myBar)}>
           <Image 
-            source={require('../components/cocktails.png')}
+            source={require('../assets/cocktails.png')}
             //<div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-            style={{ width: 40, height: 40, marginRight: 20 }}/>
+            style={{ width: 40, height: 40, marginRight: 20 }}
+          />
         </Pressable>
       ),
     });
@@ -88,8 +87,9 @@ export default function MyBarScreen({ navigation }) {
       <TouchableOpacity
         onPress={() =>
           navigation.navigate("Ingredient Details", item.strIngredient1)
-      }>
-        <ListItem bottomDivider>
+        }
+      >
+        <ListItem bottomDivider >
           <Avatar source={{uri:url}} />
           <ListItem.Content>
             <ListItem.Title>{item.strIngredient1}</ListItem.Title>
@@ -113,22 +113,25 @@ export default function MyBarScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.screen}>
-        <MySearchBar onChangeText={search} value={searchText} placeholder={'Search ingredients...'}/>
-        <Text style={styles.header}>My bar</Text>
-        {myBar.length === 0 &&
+      <MySearchBar onChangeText={search} value={searchText} placeholder={'Search ingredients...'}/>
+      <Text style={styles.header}>My bar</Text>
+      {myBar.length === 0 &&
+        <View>
           <Text style={styles.replacement}>You haven't added anything to your Bar yet </Text>
-        }
-        <View style={{ flex: 1, flexDirection:'row' }}>
-          <MyCarousel data = {myBar} navigation = {navigation} deleteData = {deleteData}/>
+          <Text style={{...styles.replacement,...{fontSize: 14, fontWeight: "normal",}}}>To add the ingredients to My Bar, explore the ingredients and tap the "My Bar" icon. To delete an item, long-press item's name in the list on this page</Text>
         </View>
-        <Text style={styles.header}>Ingredients</Text>
-        <View style={{ flex: 2}}>
-          <FlatList 
-              data={filteredIngr && filteredIngr.length > 0 ? filteredIngr : allIngr}
-              keyExtractor={(item, index) => (item, index)} 
-              renderItem={({item}) => <Item item = {item}/>}
-              />  
-        </View>
+      }
+      <View style={{ flex: 1, flexDirection:'row' }}>
+        <MyCarousel data = {myBar} navigation = {navigation} deleteData = {deleteData}/>
+      </View>
+      <Text style={styles.header}>Ingredients</Text>
+      <View style={{ flex: 2}}>
+        <FlatList 
+            data={filteredIngr && filteredIngr.length > 0 ? filteredIngr : allIngr}
+            keyExtractor={(item, index) => item + index} 
+            renderItem={({item}) => <Item item = {item}/>}
+        />  
+      </View>
     </SafeAreaView> 
   );
 }
@@ -139,7 +142,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignContent: "center",
-    backgroundColor:'white',
+    backgroundColor: 'white',
   },
   header: { 
     color: "gray",
@@ -155,6 +158,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold", 
     textAlign: "center",
     fontWeight: "bold",
-    margin:5
+    margin: 5
   }
 });

@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import {LoginStackNavigator} from './navigation/StackNavigation';
 import {firebaseConfig} from './screens/keys';
 import * as firebase from 'firebase';
+import UserContext from "./navigation/UserContext"
 
 const config = firebaseConfig() ;
   
@@ -29,9 +30,10 @@ export default function App() {
   //show the main navigation for the logged user
   if (user != null) {
     return (
+      <UserContext.Provider value={user}>
         < NavigationContainer >
           <AppNav headerMode="none" headerShown="false" />
-        </NavigationContainer >
+        </NavigationContainer ></UserContext.Provider>
     )
   } else { //If the user is not logged in, show the screens to login or signup
       return (

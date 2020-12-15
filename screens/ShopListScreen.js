@@ -16,7 +16,7 @@ export default function ShopListScreen({ navigation }) {
       headerRight: () => (
         <Pressable onPress={() => navigation.navigate("Alko Finder")}>
           <Image 
-            source={require('../components/Alko-logo_nega.png')}
+            source={require('../assets/Alko-logo_nega.png')}
             style={{ width: 40, height: 40, marginRight: 20 }}/>
         </Pressable>
       ),
@@ -27,23 +27,23 @@ export default function ShopListScreen({ navigation }) {
   const _ = require("lodash");
   
   useEffect(() => {
-      firebase
-        .database()
-        .ref("shoppings/" + user)
-        .on("value", (snapshot) => {
-            const data = snapshot.val();
-            if (data !== null) {
-              const keys = Object.keys(data);
-              const values = Object.values(data);
-              const result = {};
-              keys.forEach((key, i) => result[key] = values[i]);
-              setItems(values);
-              setFullData(result); 
-          } else {
-            setItems([]);
-            setFullData([]);
-          }
-        });
+    firebase
+      .database()
+      .ref("shoppings/" + user)
+      .on("value", (snapshot) => {
+          const data = snapshot.val();
+          if (data !== null) {
+            const keys = Object.keys(data);
+            const values = Object.values(data);
+            const result = {};
+            keys.forEach((key, i) => result[key] = values[i]);
+            setItems(values);
+            setFullData(result); 
+        } else {
+          setItems([]);
+          setFullData([]);
+        }
+      });
   }, []);
 
   //Delete Item from Shopping List
@@ -58,7 +58,7 @@ export default function ShopListScreen({ navigation }) {
       <TouchableOpacity
         onPress={() =>
           navigation.navigate("Ingredient Details", item.title)
-      }
+        }
         onLongPress={() => {deleteData(item)}}
       >
         <ListItem bottomDivider>
@@ -74,16 +74,20 @@ export default function ShopListScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.screen}>
-        <View style={{ flex: 2, justifyContent: 'center', }}>
-          {items.length === 0 &&
-          <Text style={styles.replacement}> You haven't added anything to your shopping list yet </Text>
-          }
-          <FlatList 
-            data={items}
-            keyExtractor={(item, index) => index} 
-            renderItem={({item}) => <Item item = {item}/>}
-            ListHeaderComponent={<Text style={styles.header} >My shopping list</Text>}/>  
-        </View>
+      <View style={{ flex: 2, justifyContent: 'center', }}>
+        {items.length === 0 &&
+          <View>
+            <Text style={styles.replacement}> You haven't added anything to your shopping list yet </Text>
+            <Text style={{...styles.replacement,...{fontSize: 14, fontWeight: "normal",}}}>To add the items to the shopping list, explore the ingredients and tap the "shopping list" icon. To delete an item, long-press item's name in the list on this page</Text>
+          </View>
+        }
+        <FlatList 
+          data={items}
+          keyExtractor={(item, index) => index} 
+          renderItem={({item}) => <Item item = {item}/>}
+          ListHeaderComponent={<Text style={styles.header} >My shopping list</Text>}
+        />  
+      </View>
     </SafeAreaView> 
   );
 }
@@ -94,7 +98,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignContent: "center",
     backgroundColor:'white',
-    padding: 10
   },
   header: { 
     color: "gray",

@@ -62,15 +62,13 @@ export default function SearchScreen({navigation}) {
   return (
     <SafeAreaView style={styles.screen}>
       <MySearchBar onChangeText={search} value={searchText} placeholder={'Search by name...'}/>
-      <SafeAreaView style={styles.screen}>
-          <View style={{ flex: 2, justifyContent: 'center', }}>
+        <View style={{ flex: 2}}>
           <FlatList 
             data={filteredcocktails && filteredcocktails.length > 0 ? filteredcocktails : allCocktails}
-            keyExtractor={(item, index) => index} 
+            keyExtractor={(item, index) => item + index} 
             renderItem={({item}) => <Item item = {item}/>}
             />  
-          </View>
-      </SafeAreaView>
+        </View>
     </SafeAreaView>
   );
 };
@@ -81,7 +79,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignContent: "center",
-    backgroundColor:'white',
-    padding: 10
+    backgroundColor: 'white',
   },
 });

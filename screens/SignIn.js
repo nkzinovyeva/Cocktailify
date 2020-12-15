@@ -47,13 +47,12 @@ export default function SignIn({ navigation }) {
     return (
         <View style={styles.container}>
             <Image
-                style={{ width: 150, height: 150 }}
-                source={require('../components/cocktails.png')}
+                style={{ width: 150, height: 150, marginTop: 30 }}
+                source={require('../assets/logo.png')}
             />
             <TextInput
                 style={styles.input}
                 placeholder="E-mail"
-                placeholderTextColor="#aaaaaa"
                 onChangeText={(text) => setEmail(text)}
                 value={email}
                 autoCapitalize="none"
@@ -61,7 +60,6 @@ export default function SignIn({ navigation }) {
             <TextInput
                 style={styles.input}
                 placeholder="Password"
-                placeholderTextColor="#aaaaaa"
                 onChangeText={(text) => setPassword(text)}
                 value={password}
                 secureTextEntry={true}

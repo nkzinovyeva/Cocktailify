@@ -1,10 +1,12 @@
 import React, { useState, useEffect} from 'react';
-import { Alert, StyleSheet, Text, View, Pressable} from 'react-native';
+import { Alert, StyleSheet, Text, View, Pressable, Dimensions} from 'react-native';
 import { Icon } from 'react-native-elements'
 import UserContext from "../navigation/UserContext"
 import MyCarousel from '../components/Carousel_cocktail';
 import {keyapi} from './keys.js';
 import * as firebase from 'firebase';
+
+const { width } = Dimensions.get("screen");
 
 export default function CocktailsScreen({navigation}) {
 
@@ -21,12 +23,12 @@ export default function CocktailsScreen({navigation}) {
     getLatestCocktails();
   }, []); 
 
+  //log off function
   const logoff = () => {
     firebase.auth()
       .signOut()
       .then(() => {
         firebase.database().ref().off();
-        console.log('Sign-out successful');
       })
   }
 
@@ -81,14 +83,20 @@ export default function CocktailsScreen({navigation}) {
     }); 
   };
 
-return (
+  return ( 
     <View style={styles.screen}>
+      <View style={{ flex: width/3 }}>
         <Text style={styles.text}>Random cocktails</Text>
-          <MyCarousel data = {randCocktails} navigation= {navigation}/>
+        <MyCarousel data = {randCocktails} navigation= {navigation}/>
+      </View>
+      <View style={{ flex: width/3 }}>
         <Text style={styles.text}>Now in trends</Text>
-          <MyCarousel data = {popCocktails} navigation= {navigation}/>
+        <MyCarousel data = {popCocktails} navigation= {navigation}/>
+      </View>
+      <View style={{ flex: width/3 }}>
         <Text style={styles.text}>Latest cocktails</Text>
-          <MyCarousel data = {latestCocktails} navigation= {navigation}/>  
+        <MyCarousel data = {latestCocktails} navigation= {navigation}/>  
+      </View>
     </View> 
   );
 };
@@ -107,5 +115,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold", 
     textAlign: "left",
     fontWeight: "bold",
-},
+  },
 });  
